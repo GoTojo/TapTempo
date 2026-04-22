@@ -1,26 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useState, useRef } from "react";
 
-function App() {
+export default function App() {
+  const [bpm, setBpm] = useState<number | null>(null);
+  const lastTapRef = useRef<number | null>(null);
+
+  const handleTap = () => {
+    const now = performance.now();
+
+    if (lastTapRef.current) {
+      const diff = now - lastTapRef.current; // ms
+      const bpmValue = Math.round(60000 / diff);
+      setBpm(bpmValue);
+    }
+
+    lastTapRef.current = now;
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div
+      onClick={handleTap}
+      onTouchStart={handleTap}
+      style={{
+        width: "100vw",
+        height: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        fontSize: "4rem",
+        userSelect: "none",
+      }}
+    >
+      {bpm ? `${bpm} BPM` : "Tap to start"}
     </div>
   );
 }
-
-export default App;
