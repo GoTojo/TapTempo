@@ -36,7 +36,7 @@ const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || naviga
         touchAction: "none",
       }}
     >
-      {bpm ? `${bpm} BPM` : "Tap to start"}
+      {bpm ? `${bpm}` : "Tap to start"}
     </div>
   );
 }
