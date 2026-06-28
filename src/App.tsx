@@ -2,20 +2,30 @@ import { useRef, useState } from "react";
 
 export default function App() {
   const [bpm, setBpm] = useState<number | null>(null);
-  const lastTapRef = useRef<number | null>(null);
+  const tapsRef = useRef<number[]>([]);
 
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
 
   const handleTap = () => {
     const now = performance.now();
 
-    if (lastTapRef.current) {
-      const diff = now - lastTapRef.current;
-      const bpmValue = Math.round(60000 / diff);
-      setBpm(bpmValue);
+    tapsRef.current.push(now);
+
+    if (tapsRef.current.length > 5) {
+      tapsRef.current.shift();
     }
 
-    lastTapRef.current = now;
+    if (tapsRef.current.length < 2) return;
+
+    const intervals: number[] = [];
+    for (let i = 1; i < tapsRef.current.length; i++) {
+      intervals.push(tapsRef.current[i] - tapsRef.current[i - 1]);
+    }
+
+    const avg = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+
+    const bpmValue = Math.round(60000 / avg);
+    setBpm(bpmValue);
   };
 
   return (
